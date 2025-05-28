@@ -1,0 +1,249 @@
+{% extends "base.html" %}
+
+{% block title %}首页 - 种子分类和OOD检测系统{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <!-- 欢迎横幅 -->
+        <div class="card bg-primary text-white mb-4">
+            <div class="card-body text-center py-5">
+                <h1 class="display-4 mb-3">
+                    <i class="fas fa-seedling me-3"></i>
+                    种子检测系统
+                </h1>
+                <p class="lead mb-4">
+                    基于OpenOOD框架的智能种子分类和异常检测系统
+                </p>
+                <a href="{{ url_for('upload_file') }}" class="btn btn-light btn-lg">
+                    <i class="fas fa-upload me-2"></i>开始检测
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- 系统功能 -->
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    <i class="fas fa-search fa-3x text-primary"></i>
+                </div>
+                <h5 class="card-title">智能分类</h5>
+                <p class="card-text">
+                    支持10种已知种子类型的精确分类，基于深度学习模型提供高准确率识别。
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    <i class="fas fa-exclamation-triangle fa-3x text-warning"></i>
+                </div>
+                <h5 class="card-title">异常检测</h5>
+                <p class="card-text">
+                    使用ODIN方法检测外来种子，有效识别不属于已知类别的异常样本。
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    <i class="fas fa-chart-line fa-3x text-success"></i>
+                </div>
+                <h5 class="card-title">置信度评估</h5>
+                <p class="card-text">
+                    提供详细的置信度分析，帮助用户了解预测结果的可靠性。
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- 快速开始 -->
+    <div class="col-lg-8 mx-auto">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-rocket me-2"></i>快速开始
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-upload text-primary me-2"></i>1. 上传图像</h6>
+                        <p class="text-muted mb-3">
+                            支持PNG、JPG、JPEG、BMP、TIFF格式，单个文件最大16MB。
+                        </p>
+                        
+                        <h6><i class="fas fa-cogs text-primary me-2"></i>2. 自动检测</h6>
+                        <p class="text-muted mb-3">
+                            系统自动进行种子分类和异常检测，提供详细的分析结果。
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-chart-bar text-primary me-2"></i>3. 查看结果</h6>
+                        <p class="text-muted mb-3">
+                            获得分类结果、置信度评分和OOD检测标识。
+                        </p>
+                        
+                        <h6><i class="fas fa-download text-primary me-2"></i>4. 导出数据</h6>
+                        <p class="text-muted mb-3">
+                            支持JSON格式导出检测结果，便于后续分析处理。
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-4">
+                    <a href="{{ url_for('upload_file') }}" class="btn btn-primary btn-lg me-3">
+                        <i class="fas fa-upload me-2"></i>立即开始
+                    </a>
+                    <a href="{{ url_for('results') }}" class="btn btn-outline-secondary btn-lg">
+                        <i class="fas fa-history me-2"></i>查看历史
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 技术特性 -->
+<div class="row mt-5">
+    <div class="col-12">
+        <h3 class="text-center mb-4">技术特性</h3>
+    </div>
+    
+    <div class="col-md-3 mb-3">
+        <div class="text-center">
+            <i class="fas fa-microchip fa-2x text-primary mb-2"></i>
+            <h6>GPU加速</h6>
+            <small class="text-muted">支持CUDA加速推理</small>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-3">
+        <div class="text-center">
+            <i class="fas fa-layer-group fa-2x text-primary mb-2"></i>
+            <h6>深度学习</h6>
+            <small class="text-muted">基于ResNet架构</small>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-3">
+        <div class="text-center">
+            <i class="fas fa-shield-alt fa-2x text-primary mb-2"></i>
+            <h6>ODIN检测</h6>
+            <small class="text-muted">先进的OOD检测方法</small>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-3">
+        <div class="text-center">
+            <i class="fas fa-tachometer-alt fa-2x text-primary mb-2"></i>
+            <h6>高性能</h6>
+            <small class="text-muted">快速批量处理</small>
+        </div>
+    </div>
+</div>
+
+<!-- 系统状态卡片 -->
+<div class="row mt-5">
+    <div class="col-lg-6 mx-auto">
+        <div class="card" id="system-status-card">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="fas fa-server me-2"></i>系统状态
+                </h6>
+            </div>
+            <div class="card-body">
+                <div id="status-loading" class="text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">加载中...</span>
+                    </div>
+                    <p class="mt-2 text-muted">检查系统状态...</p>
+                </div>
+                
+                <div id="status-content" style="display: none;">
+                    <div class="row text-center">
+                        <div class="col-4">
+                            <div class="border-end">
+                                <h6 class="text-muted mb-1">推理管道</h6>
+                                <span id="pipeline-status" class="badge bg-secondary">检查中</span>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="border-end">
+                                <h6 class="text-muted mb-1">计算设备</h6>
+                                <span id="device-info" class="badge bg-secondary">检查中</span>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <h6 class="text-muted mb-1">GPU状态</h6>
+                            <span id="gpu-status" class="badge bg-secondary">检查中</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// 更新系统状态显示
+function updateSystemStatus() {
+    fetch('/api/status')
+        .then(response => response.json())
+        .then(data => {
+            // 隐藏加载动画
+            document.getElementById('status-loading').style.display = 'none';
+            document.getElementById('status-content').style.display = 'block';
+            
+            // 更新推理管道状态
+            const pipelineStatus = document.getElementById('pipeline-status');
+            if (data.pipeline_ready) {
+                pipelineStatus.textContent = '就绪';
+                pipelineStatus.className = 'badge bg-success';
+            } else {
+                pipelineStatus.textContent = '离线';
+                pipelineStatus.className = 'badge bg-danger';
+            }
+            
+            // 更新设备信息
+            const deviceInfo = document.getElementById('device-info');
+            deviceInfo.textContent = data.device || 'N/A';
+            deviceInfo.className = data.cuda_available ? 'badge bg-success' : 'badge bg-warning';
+            
+            // 更新GPU状态
+            const gpuStatus = document.getElementById('gpu-status');
+            if (data.cuda_available && data.gpu_count) {
+                gpuStatus.textContent = `${data.gpu_count}个GPU`;
+                gpuStatus.className = 'badge bg-success';
+            } else {
+                gpuStatus.textContent = '不可用';
+                gpuStatus.className = 'badge bg-warning';
+            }
+        })
+        .catch(error => {
+            console.error('获取系统状态失败:', error);
+            document.getElementById('status-loading').innerHTML = 
+                '<p class="text-danger"><i class="fas fa-exclamation-triangle me-2"></i>无法获取系统状态</p>';
+        });
+}
+
+// 页面加载时更新状态
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(updateSystemStatus, 1000);
+});
+</script>
+{% endblock %} 

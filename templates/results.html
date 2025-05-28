@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block title %}历史记录 - 种子分类和OOD检测系统{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="fas fa-history me-2"></i>检测历史记录
+                </h5>
+                <a href="{{ url_for('upload_file') }}" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>新建检测
+                </a>
+            </div>
+            <div class="card-body">
+                {% if result_files %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th><i class="fas fa-calendar me-1"></i>检测时间</th>
+                                    <th><i class="fas fa-images me-1"></i>图像数量</th>
+                                    <th><i class="fas fa-check-circle me-1"></i>已知种子</th>
+                                    <th><i class="fas fa-exclamation-triangle me-1"></i>外来种子</th>
+                                    <th><i class="fas fa-file me-1"></i>文件大小</th>
+                                    <th><i class="fas fa-cogs me-1"></i>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for result in result_files %}
+                                <tr>
+                                    <td>
+                                        <span class="text-muted">
+                                            {{ result.timestamp[:8] if result.timestamp else 'N/A' }}
+                                            <br>
+                                            <small>{{ result.timestamp[9:15] if result.timestamp and result.timestamp|length > 9 else '' }}</small>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-primary">
+                                            {{ result.stats.total_images if result.stats else 0 }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-success">
+                                            {{ result.stats.id_samples if result.stats else 0 }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-danger">
+                                            {{ result.stats.ood_samples if result.stats else 0 }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <small class="text-muted">
+                                            {{ result.size | filesize }}
+                                        </small>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <a href="{{ url_for('view_result', filename=result.filename) }}" 
+                                               class="btn btn-outline-primary" title="查看详情">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{{ url_for('download_result', filename=result.filename) }}" 
+                                               class="btn btn-outline-success" title="下载结果">
+                                                <i class="fas fa-download"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- 统计信息 -->
+                    <div class="row mt-4">
+                        <div class="col-md-3 col-6 mb-3">
+                            <div class="text-center">
+                                <h4 class="text-primary mb-1">{{ result_files | length }}</h4>
+                                <small class="text-muted">总检测次数</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6 mb-3">
+                            <div class="text-center">
+                                <h4 class="text-info mb-1">
+                                    {{ result_files | sum(attribute='stats.total_images') if result_files else 0 }}
+                                </h4>
+                                <small class="text-muted">总处理图像</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6 mb-3">
+                            <div class="text-center">
+                                <h4 class="text-success mb-1">
+                                    {{ result_files | sum(attribute='stats.id_samples') if result_files else 0 }}
+                                </h4>
+                                <small class="text-muted">已知种子总数</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6 mb-3">
+                            <div class="text-center">
+                                <h4 class="text-danger mb-1">
+                                    {{ result_files | sum(attribute='stats.ood_samples') if result_files else 0 }}
+                                </h4>
+                                <small class="text-muted">外来种子总数</small>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <!-- 空状态 -->
+                    <div class="text-center py-5">
+                        <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">暂无检测记录</h5>
+                        <p class="text-muted mb-4">
+                            您还没有进行过任何检测，点击下方按钮开始您的第一次检测。
+                        </p>
+                        <a href="{{ url_for('upload_file') }}" class="btn btn-primary btn-lg">
+                            <i class="fas fa-upload me-2"></i>开始检测
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

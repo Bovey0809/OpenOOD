@@ -1,0 +1,253 @@
+{% extends "base.html" %}
+
+{% block title %}上传检测 - 种子分类和OOD检测系统{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-upload me-2"></i>上传种子图像
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" enctype="multipart/form-data" id="upload-form">
+                    <!-- 拖拽上传区域 -->
+                    <div class="drag-drop-area" id="drag-drop-area">
+                        <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
+                        <h5>拖拽文件到此处或点击选择</h5>
+                        <p class="text-muted mb-3">
+                            支持 PNG、JPG、JPEG、BMP、TIFF 格式<br>
+                            单个文件最大 16MB，支持批量上传
+                        </p>
+                        <input type="file" name="files" id="file-input" multiple accept=".png,.jpg,.jpeg,.bmp,.tiff" class="d-none">
+                        <button type="button" class="btn btn-primary" onclick="document.getElementById('file-input').click()">
+                            <i class="fas fa-folder-open me-2"></i>选择文件
+                        </button>
+                    </div>
+                    
+                    <!-- 文件预览区域 -->
+                    <div id="file-preview-area" class="mt-4" style="display: none;">
+                        <h6><i class="fas fa-images me-2"></i>已选择的文件</h6>
+                        <div id="file-preview-list" class="row"></div>
+                        
+                        <div class="mt-3 text-center">
+                            <button type="submit" class="btn btn-success btn-lg me-3">
+                                <i class="fas fa-play me-2"></i>开始检测
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary" onclick="clearFiles()">
+                                <i class="fas fa-trash me-2"></i>清空文件
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- 使用说明 -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="fas fa-info-circle me-2"></i>使用说明
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-check-circle text-success me-2"></i>支持的格式</h6>
+                        <ul class="list-unstyled text-muted">
+                            <li><i class="fas fa-file-image me-2"></i>PNG 图像</li>
+                            <li><i class="fas fa-file-image me-2"></i>JPEG/JPG 图像</li>
+                            <li><i class="fas fa-file-image me-2"></i>BMP 图像</li>
+                            <li><i class="fas fa-file-image me-2"></i>TIFF 图像</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-lightbulb text-warning me-2"></i>最佳实践</h6>
+                        <ul class="list-unstyled text-muted">
+                            <li><i class="fas fa-camera me-2"></i>清晰的种子图像</li>
+                            <li><i class="fas fa-expand me-2"></i>适当的图像分辨率</li>
+                            <li><i class="fas fa-sun me-2"></i>良好的光照条件</li>
+                            <li><i class="fas fa-crop me-2"></i>种子居中显示</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let selectedFiles = [];
+
+// 拖拽功能
+const dragDropArea = document.getElementById('drag-drop-area');
+const fileInput = document.getElementById('file-input');
+
+// 防止默认拖拽行为
+['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+    dragDropArea.addEventListener(eventName, preventDefaults, false);
+    document.body.addEventListener(eventName, preventDefaults, false);
+});
+
+// 高亮拖拽区域
+['dragenter', 'dragover'].forEach(eventName => {
+    dragDropArea.addEventListener(eventName, highlight, false);
+});
+
+['dragleave', 'drop'].forEach(eventName => {
+    dragDropArea.addEventListener(eventName, unhighlight, false);
+});
+
+// 处理文件拖拽
+dragDropArea.addEventListener('drop', handleDrop, false);
+
+// 处理文件选择
+fileInput.addEventListener('change', function(e) {
+    handleFiles(e.target.files);
+});
+
+function preventDefaults(e) {
+    e.preventDefault();
+    e.stopPropagation();
+}
+
+function highlight(e) {
+    dragDropArea.classList.add('dragover');
+}
+
+function unhighlight(e) {
+    dragDropArea.classList.remove('dragover');
+}
+
+function handleDrop(e) {
+    const dt = e.dataTransfer;
+    const files = dt.files;
+    handleFiles(files);
+}
+
+function handleFiles(files) {
+    selectedFiles = Array.from(files);
+    displayFilePreview();
+}
+
+function displayFilePreview() {
+    const previewArea = document.getElementById('file-preview-area');
+    const previewList = document.getElementById('file-preview-list');
+    
+    if (selectedFiles.length === 0) {
+        previewArea.style.display = 'none';
+        return;
+    }
+    
+    previewArea.style.display = 'block';
+    previewList.innerHTML = '';
+    
+    selectedFiles.forEach((file, index) => {
+        const col = document.createElement('div');
+        col.className = 'col-md-3 col-sm-4 col-6 mb-3';
+        
+        const card = document.createElement('div');
+        card.className = 'card';
+        
+        // 创建图像预览
+        if (file.type.startsWith('image/')) {
+            const img = document.createElement('img');
+            img.className = 'card-img-top file-preview';
+            img.style.height = '150px';
+            img.style.objectFit = 'cover';
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+            
+            card.appendChild(img);
+        }
+        
+        const cardBody = document.createElement('div');
+        cardBody.className = 'card-body p-2';
+        
+        const fileName = document.createElement('h6');
+        fileName.className = 'card-title mb-1';
+        fileName.style.fontSize = '0.8rem';
+        fileName.textContent = file.name.length > 20 ? file.name.substring(0, 20) + '...' : file.name;
+        
+        const fileSize = document.createElement('small');
+        fileSize.className = 'text-muted';
+        fileSize.textContent = formatFileSize(file.size);
+        
+        const removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.className = 'btn btn-sm btn-outline-danger mt-1';
+        removeBtn.innerHTML = '<i class="fas fa-times"></i>';
+        removeBtn.onclick = () => removeFile(index);
+        
+        cardBody.appendChild(fileName);
+        cardBody.appendChild(fileSize);
+        cardBody.appendChild(removeBtn);
+        card.appendChild(cardBody);
+        col.appendChild(card);
+        previewList.appendChild(col);
+    });
+    
+    // 更新文件输入
+    updateFileInput();
+}
+
+function removeFile(index) {
+    selectedFiles.splice(index, 1);
+    displayFilePreview();
+}
+
+function clearFiles() {
+    selectedFiles = [];
+    displayFilePreview();
+}
+
+function updateFileInput() {
+    // 创建新的 DataTransfer 对象来更新文件输入
+    const dt = new DataTransfer();
+    selectedFiles.forEach(file => {
+        dt.items.add(file);
+    });
+    fileInput.files = dt.files;
+}
+
+function formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
+// 表单提交验证
+document.getElementById('upload-form').addEventListener('submit', function(e) {
+    if (selectedFiles.length === 0) {
+        e.preventDefault();
+        alert('请先选择要上传的文件');
+        return false;
+    }
+    
+    // 检查文件大小
+    const maxSize = 16 * 1024 * 1024; // 16MB
+    for (let file of selectedFiles) {
+        if (file.size > maxSize) {
+            e.preventDefault();
+            alert(`文件 "${file.name}" 超过16MB大小限制`);
+            return false;
+        }
+    }
+    
+    // 显示上传进度
+    const submitBtn = this.querySelector('button[type="submit"]');
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>上传中...';
+    submitBtn.disabled = true;
+});
+</script>
+{% endblock %} 

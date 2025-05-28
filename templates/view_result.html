@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+
+{% block title %}检测结果详情 - 种子分类和OOD检测系统{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <!-- 返回按钮 -->
+        <div class="mb-3">
+            <a href="{{ url_for('results') }}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-2"></i>返回历史记录
+            </a>
+        </div>
+        
+        <!-- 检测信息概览 -->
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="fas fa-info-circle me-2"></i>检测信息
+                </h5>
+                <div>
+                    <a href="{{ url_for('download_result', filename=filename) }}" class="btn btn-success btn-sm">
+                        <i class="fas fa-download me-1"></i>下载结果
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-calendar me-2"></i>检测时间</h6>
+                        <p class="text-muted">{{ data.timestamp if data.timestamp else 'N/A' }}</p>
+                        
+                        <h6><i class="fas fa-file me-2"></i>结果文件</h6>
+                        <p class="text-muted">{{ filename }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <!-- 统计信息 -->
+                        <div class="row text-center">
+                            <div class="col-6 mb-3">
+                                <h4 class="text-primary mb-1">{{ data.stats.total_images if data.stats else 0 }}</h4>
+                                <small class="text-muted">总图像数</small>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <h4 class="text-success mb-1">{{ data.stats.successful_images if data.stats else 0 }}</h4>
+                                <small class="text-muted">成功处理</small>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <h4 class="text-info mb-1">{{ data.stats.id_samples if data.stats else 0 }}</h4>
+                                <small class="text-muted">已知种子</small>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <h4 class="text-danger mb-1">{{ data.stats.ood_samples if data.stats else 0 }}</h4>
+                                <small class="text-muted">外来种子</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                {% if data.stats %}
+                <!-- 性能信息 -->
+                <div class="row mt-3">
+                    <div class="col-md-4">
+                        <small class="text-muted">平均处理时间</small>
+                        <p class="mb-0">{{ "%.0f"|format(data.stats.avg_processing_time * 1000) }}ms</p>
+                    </div>
+                    <div class="col-md-4">
+                        <small class="text-muted">成功率</small>
+                        <p class="mb-0">{{ "%.1f"|format((data.stats.successful_images / data.stats.total_images * 100) if data.stats.total_images > 0 else 0) }}%</p>
+                    </div>
+                    <div class="col-md-4">
+                        <small class="text-muted">OOD检出率</small>
+                        <p class="mb-0">{{ "%.1f"|format((data.stats.ood_samples / data.stats.successful_images * 100) if data.stats.successful_images > 0 else 0) }}%</p>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- 检测结果列表 -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-list me-2"></i>详细结果 ({{ results | length }} 项)
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if results %}
+                    <div class="row">
+                        {% for result in results %}
+                        <div class="col-lg-6 mb-4">
+                            <div class="card result-card h-100">
+                                <div class="row g-0">
+                                    <!-- 图像预览 -->
+                                    <div class="col-4">
+                                        <img src="{{ url_for('uploaded_file', filename=result.filename) }}" 
+                                             class="img-fluid rounded-start h-100" 
+                                             style="object-fit: cover; min-height: 150px;"
+                                             alt="{{ result.filename }}">
+                                    </div>
+                                    
+                                    <!-- 结果信息 -->
+                                    <div class="col-8">
+                                        <div class="card-body p-3">
+                                            <h6 class="card-title mb-2">
+                                                {{ result.filename[:20] }}{{ '...' if result.filename|length > 20 else '' }}
+                                            </h6>
+                                            
+                                            {% if result.error %}
+                                                <!-- 错误信息 -->
+                                                <div class="alert alert-danger alert-sm mb-2">
+                                                    <small><i class="fas fa-exclamation-triangle me-1"></i>{{ result.error }}</small>
+                                                </div>
+                                            {% else %}
+                                                <!-- 成功结果 -->
+                                                <div class="mb-2">
+                                                    <small class="text-muted">分类结果:</small><br>
+                                                    <span class="badge bg-primary">{{ result.predicted_class_name }}</span>
+                                                </div>
+                                                
+                                                <div class="mb-2">
+                                                    <small class="text-muted">置信度:</small><br>
+                                                    <span class="badge bg-{{ result.confidence_color }}">{{ result.confidence_formatted }}</span>
+                                                </div>
+                                                
+                                                <div class="mb-2">
+                                                    <small class="text-muted">OOD检测:</small><br>
+                                                    <span class="badge bg-{{ result.ood_badge.class }}">{{ result.ood_badge.text }}</span>
+                                                </div>
+                                                
+                                                <div class="mb-2">
+                                                    <small class="text-muted">处理时间:</small><br>
+                                                    <small class="text-info">{{ "%.0f"|format(result.processing_time * 1000) }}ms</small>
+                                                </div>
+                                                
+                                                <!-- 置信度条 -->
+                                                <div class="progress" style="height: 4px;">
+                                                    <div class="progress-bar bg-{{ result.confidence_color }}" 
+                                                         style="width: {{ result.confidence * 100 }}%"></div>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                {% if not result.error and result.probabilities %}
+                                <!-- 详细概率（可折叠） -->
+                                <div class="card-footer p-2">
+                                    <button class="btn btn-sm btn-outline-secondary w-100" 
+                                            type="button" 
+                                            data-bs-toggle="collapse" 
+                                            data-bs-target="#probabilities-{{ loop.index }}"
+                                            aria-expanded="false">
+                                        <i class="fas fa-chevron-down me-1"></i>
+                                        <small>详细概率</small>
+                                    </button>
+                                    
+                                    <div class="collapse mt-2" id="probabilities-{{ loop.index }}">
+                                        <div class="row">
+                                            {% for class_name, prob in result.probabilities.items() %}
+                                            <div class="col-6 mb-1">
+                                                <small class="text-muted">
+                                                    {{ class_name }}: 
+                                                    <span class="text-primary">{{ "%.1f"|format(prob * 100) }}%</span>
+                                                </small>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-exclamation-circle fa-2x text-muted mb-3"></i>
+                        <h6 class="text-muted">没有检测结果</h6>
+                        <p class="text-muted">此次检测没有产生任何结果。</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.alert-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+}
+
+.result-card {
+    transition: transform 0.2s ease-in-out;
+}
+
+.result-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.progress {
+    border-radius: 2px;
+}
+</style>
+{% endblock %} 

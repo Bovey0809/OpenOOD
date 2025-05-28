@@ -1,0 +1,348 @@
+{% extends "base.html" %}
+
+{% block title %}检测中 - 种子分类和OOD检测系统{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-10 mx-auto">
+        <!-- 检测进度卡片 -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-cogs me-2"></i>检测进度
+                </h5>
+            </div>
+            <div class="card-body">
+                <div id="detection-status" class="text-center">
+                    <div class="spinner-border text-primary mb-3" role="status">
+                        <span class="visually-hidden">检测中...</span>
+                    </div>
+                    <h6>正在初始化检测...</h6>
+                    <p class="text-muted">请稍候，系统正在处理您的图像</p>
+                </div>
+                
+                <div class="progress mt-3" style="height: 8px;">
+                    <div id="progress-bar" class="progress-bar progress-bar-striped progress-bar-animated" 
+                         role="progressbar" style="width: 0%"></div>
+                </div>
+                
+                <div id="progress-text" class="text-center mt-2">
+                    <small class="text-muted">准备中...</small>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 检测结果卡片 -->
+        <div id="results-card" class="card" style="display: none;">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="fas fa-chart-bar me-2"></i>检测结果
+                </h5>
+                <div>
+                    <button id="download-btn" class="btn btn-outline-primary btn-sm me-2" style="display: none;">
+                        <i class="fas fa-download me-1"></i>下载结果
+                    </button>
+                    <button class="btn btn-outline-secondary btn-sm" onclick="window.location.href='{{ url_for('upload_file') }}'">
+                        <i class="fas fa-plus me-1"></i>检测更多
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <!-- 统计信息 -->
+                <div id="stats-section" class="row mb-4" style="display: none;">
+                    <div class="col-md-3 col-6 mb-3">
+                        <div class="text-center">
+                            <h4 id="total-images" class="text-primary mb-1">0</h4>
+                            <small class="text-muted">总图像数</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6 mb-3">
+                        <div class="text-center">
+                            <h4 id="id-samples" class="text-success mb-1">0</h4>
+                            <small class="text-muted">已知种子</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6 mb-3">
+                        <div class="text-center">
+                            <h4 id="ood-samples" class="text-danger mb-1">0</h4>
+                            <small class="text-muted">外来种子</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6 mb-3">
+                        <div class="text-center">
+                            <h4 id="avg-time" class="text-info mb-1">0ms</h4>
+                            <small class="text-muted">平均处理时间</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 结果列表 -->
+                <div id="results-list"></div>
+            </div>
+        </div>
+        
+        <!-- 错误信息卡片 -->
+        <div id="error-card" class="card border-danger" style="display: none;">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-exclamation-triangle me-2"></i>检测失败
+                </h5>
+            </div>
+            <div class="card-body">
+                <p id="error-message" class="text-danger mb-3"></p>
+                <div class="text-center">
+                    <button class="btn btn-primary" onclick="window.location.href='{{ url_for('upload_file') }}'">
+                        <i class="fas fa-arrow-left me-2"></i>重新上传
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const files = {{ files | tojson }};
+let detectionResults = null;
+let resultFileName = null;
+
+// 开始检测
+function startDetection() {
+    if (!files || files.length === 0) {
+        showError('没有要检测的文件');
+        return;
+    }
+    
+    updateProgress(10, '正在发送请求...');
+    
+    fetch('/api/detect', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            files: files
+        })
+    })
+    .then(response => {
+        updateProgress(30, '正在处理响应...');
+        return response.json();
+    })
+    .then(data => {
+        updateProgress(100, '检测完成');
+        
+        if (data.success) {
+            detectionResults = data.results;
+            resultFileName = data.result_file;
+            showResults(data);
+        } else {
+            showError(data.error || '检测失败');
+        }
+    })
+    .catch(error => {
+        console.error('检测失败:', error);
+        showError('网络错误或服务器异常');
+    });
+}
+
+function updateProgress(percent, message) {
+    const progressBar = document.getElementById('progress-bar');
+    const progressText = document.getElementById('progress-text');
+    
+    progressBar.style.width = percent + '%';
+    progressText.innerHTML = `<small class="text-muted">${message}</small>`;
+    
+    if (percent >= 100) {
+        progressBar.classList.remove('progress-bar-animated');
+    }
+}
+
+function showResults(data) {
+    // 隐藏进度卡片
+    document.getElementById('detection-status').style.display = 'none';
+    
+    // 显示结果卡片
+    const resultsCard = document.getElementById('results-card');
+    resultsCard.style.display = 'block';
+    
+    // 显示统计信息
+    const statsSection = document.getElementById('stats-section');
+    statsSection.style.display = 'flex';
+    
+    document.getElementById('total-images').textContent = data.stats.total_images;
+    document.getElementById('id-samples').textContent = data.stats.id_samples;
+    document.getElementById('ood-samples').textContent = data.stats.ood_samples;
+    document.getElementById('avg-time').textContent = Math.round(data.stats.avg_processing_time * 1000) + 'ms';
+    
+    // 显示下载按钮
+    const downloadBtn = document.getElementById('download-btn');
+    downloadBtn.style.display = 'inline-block';
+    downloadBtn.onclick = () => {
+        window.location.href = `/download/${resultFileName}`;
+    };
+    
+    // 显示结果列表
+    const resultsList = document.getElementById('results-list');
+    resultsList.innerHTML = '';
+    
+    data.results.forEach((result, index) => {
+        const resultCard = createResultCard(result, index);
+        resultsList.appendChild(resultCard);
+    });
+}
+
+function createResultCard(result, index) {
+    const card = document.createElement('div');
+    card.className = 'card result-card mb-3';
+    
+    const row = document.createElement('div');
+    row.className = 'row g-0';
+    
+    // 图像预览
+    const imageCol = document.createElement('div');
+    imageCol.className = 'col-md-3';
+    
+    const img = document.createElement('img');
+    img.src = `/uploads/${result.filename}`;
+    img.className = 'img-fluid rounded-start';
+    img.style.height = '200px';
+    img.style.width = '100%';
+    img.style.objectFit = 'cover';
+    img.alt = result.filename;
+    
+    imageCol.appendChild(img);
+    
+    // 结果信息
+    const contentCol = document.createElement('div');
+    contentCol.className = 'col-md-9';
+    
+    const cardBody = document.createElement('div');
+    cardBody.className = 'card-body';
+    
+    // 文件名
+    const fileName = document.createElement('h6');
+    fileName.className = 'card-title';
+    fileName.innerHTML = `<i class="fas fa-image me-2"></i>${result.filename}`;
+    
+    // 检测结果
+    const resultInfo = document.createElement('div');
+    resultInfo.className = 'row';
+    
+    if (result.error) {
+        // 错误信息
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'col-12';
+        errorDiv.innerHTML = `
+            <div class="alert alert-danger mb-0">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                检测失败: ${result.error}
+            </div>
+        `;
+        resultInfo.appendChild(errorDiv);
+    } else {
+        // 成功结果
+        const leftCol = document.createElement('div');
+        leftCol.className = 'col-md-6';
+        
+        leftCol.innerHTML = `
+            <p class="mb-2">
+                <strong>分类结果:</strong> 
+                <span class="badge bg-primary">${result.predicted_class_name}</span>
+            </p>
+            <p class="mb-2">
+                <strong>置信度:</strong> 
+                <span class="badge bg-${result.confidence_color}">${result.confidence_formatted}</span>
+            </p>
+            <p class="mb-2">
+                <strong>OOD检测:</strong> 
+                <span class="badge bg-${result.ood_badge.class}">${result.ood_badge.text}</span>
+            </p>
+        `;
+        
+        const rightCol = document.createElement('div');
+        rightCol.className = 'col-md-6';
+        
+        // 置信度条
+        const confidenceBar = document.createElement('div');
+        confidenceBar.innerHTML = `
+            <small class="text-muted">置信度分布:</small>
+            <div class="confidence-bar bg-${result.confidence_color} mb-2" 
+                 style="width: ${result.confidence * 100}%"></div>
+            <small class="processing-time">
+                <i class="fas fa-clock me-1"></i>
+                处理时间: ${Math.round(result.processing_time * 1000)}ms
+            </small>
+        `;
+        
+        rightCol.appendChild(confidenceBar);
+        
+        resultInfo.appendChild(leftCol);
+        resultInfo.appendChild(rightCol);
+        
+        // 详细概率（可折叠）
+        if (result.probabilities && Object.keys(result.probabilities).length > 0) {
+            const detailsDiv = document.createElement('div');
+            detailsDiv.className = 'col-12 mt-3';
+            
+            const detailsButton = document.createElement('button');
+            detailsButton.className = 'btn btn-sm btn-outline-secondary';
+            detailsButton.type = 'button';
+            detailsButton.setAttribute('data-bs-toggle', 'collapse');
+            detailsButton.setAttribute('data-bs-target', `#details-${index}`);
+            detailsButton.innerHTML = '<i class="fas fa-chevron-down me-1"></i>详细概率';
+            
+            const detailsCollapse = document.createElement('div');
+            detailsCollapse.className = 'collapse mt-2';
+            detailsCollapse.id = `details-${index}`;
+            
+            const probList = document.createElement('div');
+            probList.className = 'row';
+            
+            Object.entries(result.probabilities).forEach(([className, prob]) => {
+                const probCol = document.createElement('div');
+                probCol.className = 'col-md-6 mb-1';
+                probCol.innerHTML = `
+                    <small>
+                        ${className}: 
+                        <span class="text-muted">${(prob * 100).toFixed(1)}%</span>
+                    </small>
+                `;
+                probList.appendChild(probCol);
+            });
+            
+            detailsCollapse.appendChild(probList);
+            detailsDiv.appendChild(detailsButton);
+            detailsDiv.appendChild(detailsCollapse);
+            resultInfo.appendChild(detailsDiv);
+        }
+    }
+    
+    cardBody.appendChild(fileName);
+    cardBody.appendChild(resultInfo);
+    contentCol.appendChild(cardBody);
+    
+    row.appendChild(imageCol);
+    row.appendChild(contentCol);
+    card.appendChild(row);
+    
+    return card;
+}
+
+function showError(message) {
+    // 隐藏进度卡片
+    document.getElementById('detection-status').style.display = 'none';
+    
+    // 显示错误卡片
+    const errorCard = document.getElementById('error-card');
+    errorCard.style.display = 'block';
+    
+    document.getElementById('error-message').textContent = message;
+}
+
+// 页面加载时开始检测
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(startDetection, 1000);
+});
+</script>
+{% endblock %} 

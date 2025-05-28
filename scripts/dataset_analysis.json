@@ -1,0 +1,377 @@
+{
+  "train_data": {
+    "images": [
+      {
+        "path": "train/images/20240508175407.jpg",
+        "width": 3060,
+        "height": 4080,
+        "channels": 3,
+        "file_size_mb": 4.14,
+        "mean_b": 174.07,
+        "mean_g": 182.99,
+        "mean_r": 186.94,
+        "std_b": 40.3,
+        "std_g": 29.55,
+        "std_r": 23.38
+      },
+      {
+        "path": "train/images/20240508174858.jpg",
+        "width": 3060,
+        "height": 4080,
+        "channels": 3,
+        "file_size_mb": 3.56,
+        "mean_b": 172.31,
+        "mean_g": 182.56,
+        "mean_r": 187.62,
+        "std_b": 44.15,
+        "std_g": 30.45,
+        "std_r": 24.06
+      },
+      {
+        "path": "train/images/20240508174150.jpg",
+        "width": 4080,
+        "height": 3060,
+        "channels": 3,
+        "file_size_mb": 2.42,
+        "mean_b": 160.67,
+        "mean_g": 168.21,
+        "mean_r": 177.86,
+        "std_b": 35.18,
+        "std_g": 27.33,
+        "std_r": 24.26
+      },
+      {
+        "path": "train/images/20240508174843.jpg",
+        "width": 3060,
+        "height": 4080,
+        "channels": 3,
+        "file_size_mb": 4.12,
+        "mean_b": 175.17,
+        "mean_g": 184.68,
+        "mean_r": 189.2,
+        "std_b": 41.34,
+        "std_g": 29.47,
+        "std_r": 24.57
+      },
+      {
+        "path": "train/images/20240508174141.jpg",
+        "width": 4080,
+        "height": 3060,
+        "channels": 3,
+        "file_size_mb": 3.77,
+        "mean_b": 166.8,
+        "mean_g": 174.64,
+        "mean_r": 180.74,
+        "std_b": 37.8,
+        "std_g": 32.16,
+        "std_r": 30.66
+      },
+      {
+        "path": "train/images/20240508180739.jpg",
+        "width": 4080,
+        "height": 3060,
+        "channels": 3,
+        "file_size_mb": 4.09,
+        "mean_b": 172.98,
+        "mean_g": 182.32,
+        "mean_r": 188.04,
+        "std_b": 44.69,
+        "std_g": 32.01,
+        "std_r": 25.11
+      },
+      {
+        "path": "train/images/20240508175415.jpg",
+        "width": 4080,
+        "height": 3060,
+        "channels": 3,
+        "file_size_mb": 4.08,
+        "mean_b": 139.49,
+        "mean_g": 153.76,
+        "mean_r": 164.79,
+        "std_b": 50.49,
+        "std_g": 38.96,
+        "std_r": 35.81
+      },
+      {
+        "path": "train/images/20240508174200.jpg",
+        "width": 3060,
+        "height": 4080,
+        "channels": 3,
+        "file_size_mb": 3.54,
+        "mean_b": 157.0,
+        "mean_g": 167.21,
+        "mean_r": 179.88,
+        "std_b": 44.03,
+        "std_g": 32.03,
+        "std_r": 25.84
+      },
+      {
+        "path": "train/images/IMG_6220.jpg",
+        "width": 2328,
+        "height": 3104,
+        "channels": 3,
+        "file_size_mb": 1.1,
+        "mean_b": 178.95,
+        "mean_g": 178.8,
+        "mean_r": 172.8,
+        "std_b": 20.9,
+        "std_g": 15.57,
+        "std_r": 13.06
+      },
+      {
+        "path": "train/images/20240508174851.jpg",
+        "width": 3060,
+        "height": 4080,
+        "channels": 3,
+        "file_size_mb": 3.37,
+        "mean_b": 174.08,
+        "mean_g": 180.89,
+        "mean_r": 184.04,
+        "std_b": 36.87,
+        "std_g": 28.82,
+        "std_r": 25.67
+      }
+    ],
+    "masks": [],
+    "total_images": 275,
+    "total_masks": 525
+  },
+  "ood_data": {
+    "categories": {
+      "21号种子": {
+        "count": 5,
+        "images": [
+          {
+            "path": "竞品种子/21号种子/20240508175407.jpg",
+            "width": 3060,
+            "height": 4080,
+            "channels": 3,
+            "file_size_mb": 4.14,
+            "mean_b": 174.07,
+            "mean_g": 182.99,
+            "mean_r": 186.94,
+            "std_b": 40.3,
+            "std_g": 29.55,
+            "std_r": 23.38
+          },
+          {
+            "path": "竞品种子/21号种子/20240508175415.jpg",
+            "width": 4080,
+            "height": 3060,
+            "channels": 3,
+            "file_size_mb": 4.08,
+            "mean_b": 139.49,
+            "mean_g": 153.76,
+            "mean_r": 164.79,
+            "std_b": 50.49,
+            "std_g": 38.96,
+            "std_r": 35.81
+          },
+          {
+            "path": "竞品种子/21号种子/20240508175422.jpg",
+            "width": 4080,
+            "height": 3060,
+            "channels": 3,
+            "file_size_mb": 3.51,
+            "mean_b": 146.01,
+            "mean_g": 160.81,
+            "mean_r": 174.66,
+            "std_b": 52.48,
+            "std_g": 40.53,
+            "std_r": 37.6
+          }
+        ]
+      },
+      "17号种子": {
+        "count": 5,
+        "images": [
+          {
+            "path": "竞品种子/17号种子/20240508180040.jpg",
+            "width": 4080,
+            "height": 3060,
+            "channels": 3,
+            "file_size_mb": 3.9,
+            "mean_b": 141.57,
+            "mean_g": 152.05,
+            "mean_r": 159.39,
+            "std_b": 41.48,
+            "std_g": 37.19,
+            "std_r": 40.61
+          },
+          {
+            "path": "竞品种子/17号种子/20240508180110.jpg",
+            "width": 3060,
+            "height": 4080,
+            "channels": 3,
+            "file_size_mb": 3.48,
+            "mean_b": 127.44,
+            "mean_g": 138.34,
+            "mean_r": 148.32,
+            "std_b": 50.25,
+            "std_g": 44.59,
+            "std_r": 47.05
+          },
+          {
+            "path": "竞品种子/17号种子/20240508180102.jpg",
+            "width": 4080,
+            "height": 3060,
+            "channels": 3,
+            "file_size_mb": 4.03,
+            "mean_b": 165.31,
+            "mean_g": 176.22,
+            "mean_r": 182.87,
+            "std_b": 43.43,
+            "std_g": 30.43,
+            "std_r": 22.51
+          }
+        ]
+      },
+      "14号种子": {
+        "count": 5,
+        "images": [
+          {
+            "path": "竞品种子/14号种子/20240508174858.jpg",
+            "width": 3060,
+            "height": 4080,
+            "channels": 3,
+            "file_size_mb": 3.56,
+            "mean_b": 172.31,
+            "mean_g": 182.56,
+            "mean_r": 187.62,
+            "std_b": 44.15,
+            "std_g": 30.45,
+            "std_r": 24.06
+          },
+          {
+            "path": "竞品种子/14号种子/20240508174843.jpg",
+            "width": 3060,
+            "height": 4080,
+            "channels": 3,
+            "file_size_mb": 4.12,
+            "mean_b": 175.17,
+            "mean_g": 184.68,
+            "mean_r": 189.2,
+            "std_b": 41.34,
+            "std_g": 29.47,
+            "std_r": 24.57
+          },
+          {
+            "path": "竞品种子/14号种子/20240508174851.jpg",
+            "width": 3060,
+            "height": 4080,
+            "channels": 3,
+            "file_size_mb": 3.37,
+            "mean_b": 174.08,
+            "mean_g": 180.89,
+            "mean_r": 184.04,
+            "std_b": 36.87,
+            "std_g": 28.82,
+            "std_r": 25.67
+          }
+        ]
+      },
+      "23号种子": {
+        "count": 6,
+        "images": [
+          {
+            "path": "竞品种子/23号种子/20240508180739.jpg",
+            "width": 4080,
+            "height": 3060,
+            "channels": 3,
+            "file_size_mb": 4.09,
+            "mean_b": 172.98,
+            "mean_g": 182.32,
+            "mean_r": 188.04,
+            "std_b": 44.69,
+            "std_g": 32.01,
+            "std_r": 25.11
+          },
+          {
+            "path": "竞品种子/23号种子/20240508180726.jpg",
+            "width": 3060,
+            "height": 4080,
+            "channels": 3,
+            "file_size_mb": 3.58,
+            "mean_b": 138.02,
+            "mean_g": 153.21,
+            "mean_r": 167.04,
+            "std_b": 60.0,
+            "std_g": 48.14,
+            "std_r": 45.79
+          },
+          {
+            "path": "竞品种子/23号种子/20240508180717.jpg",
+            "width": 4080,
+            "height": 3060,
+            "channels": 3,
+            "file_size_mb": 4.16,
+            "mean_b": 175.37,
+            "mean_g": 186.07,
+            "mean_r": 192.8,
+            "std_b": 43.12,
+            "std_g": 30.01,
+            "std_r": 22.51
+          }
+        ]
+      },
+      "16号种子": {
+        "count": 5,
+        "images": [
+          {
+            "path": "竞品种子/16号种子/20240508174150.jpg",
+            "width": 4080,
+            "height": 3060,
+            "channels": 3,
+            "file_size_mb": 2.42,
+            "mean_b": 160.67,
+            "mean_g": 168.21,
+            "mean_r": 177.86,
+            "std_b": 35.18,
+            "std_g": 27.33,
+            "std_r": 24.26
+          },
+          {
+            "path": "竞品种子/16号种子/20240508174141.jpg",
+            "width": 4080,
+            "height": 3060,
+            "channels": 3,
+            "file_size_mb": 3.77,
+            "mean_b": 166.8,
+            "mean_g": 174.64,
+            "mean_r": 180.74,
+            "std_b": 37.8,
+            "std_g": 32.16,
+            "std_r": 30.66
+          },
+          {
+            "path": "竞品种子/16号种子/20240508174200.jpg",
+            "width": 3060,
+            "height": 4080,
+            "channels": 3,
+            "file_size_mb": 3.54,
+            "mean_b": 157.0,
+            "mean_g": 167.21,
+            "mean_r": 179.88,
+            "std_b": 44.03,
+            "std_g": 32.03,
+            "std_r": 25.84
+          }
+        ]
+      }
+    },
+    "total_images": 26
+  },
+  "summary": {
+    "total_train_images": 275,
+    "total_train_masks": 525,
+    "total_ood_images": 26,
+    "ood_categories": 5,
+    "ood_category_names": [
+      "21号种子",
+      "17号种子",
+      "14号种子",
+      "23号种子",
+      "16号种子"
+    ]
+  }
+}

@@ -1,0 +1,38 @@
+# 种子分类和OOD检测推理管道配置文件
+
+# 模型配置
+model_path: "models/best_seed_ood_classifier.pth"
+eval_results_path: "models/ood_evaluation_results.json"
+
+# 设备配置
+device: "auto"  # auto, cuda, cpu
+
+# 批处理配置
+batch_size: 32
+num_workers: 4
+
+# ODIN参数配置
+odin_temperature: 1000.0
+odin_epsilon: 0.0014
+ood_threshold: 0.2591
+
+# 图像处理配置
+max_image_size: 4096  # MB
+timeout_seconds: 30   # 单张图像处理超时时间
+
+# 性能监控
+enable_performance_monitoring: true
+
+# 日志配置
+log_level: "INFO"  # DEBUG, INFO, WARNING, ERROR
+
+# 高性能配置示例
+# batch_size: 64
+# num_workers: 8
+# enable_performance_monitoring: true
+
+# 低资源配置示例
+# batch_size: 8
+# num_workers: 2
+# enable_performance_monitoring: false
+# max_image_size: 1024 
